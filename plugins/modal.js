@@ -57,15 +57,6 @@ function _createModal(options) {
     return modal
 }
 
-/*
-*
-* onClose(): void
-* onOpen(): void
-* beforeClose(): boolean
-* --------------
-* animate.css
-*/
-
 $.modal = function (options) {
     const ANIMATION_SPEED = 200;
     const $modal = _createModal(options)
@@ -87,6 +78,11 @@ $.modal = function (options) {
             setTimeout(() => {
                 $modal.classList.remove('hide');
                 closing = false
+
+                //зачищаем дерево Дома
+                if(typeof options.onClose === 'function') {
+                    options.onClose()
+                }
             }, ANIMATION_SPEED)
         }
     }

@@ -56,24 +56,6 @@ const descriptionModal = $.modal({
     ]
 });
 
-const confirmModal = $.modal({
-    title: 'Вы уверены?',
-    closable: true,
-    width: '400px',
-    footerButtons: [
-        {
-            text: 'Отменить', type: 'secondary', handler() {
-                confirmModal.close()
-            }
-        },
-        {
-            text: 'Удалить', type: 'danger', handler() {
-                confirmModal.close()
-            }
-        }
-    ]
-});
-
 document.addEventListener('click', event => {
     event.preventDefault();
     const btnType = event.target.dataset.btn
@@ -90,10 +72,14 @@ document.addEventListener('click', event => {
         `)
         descriptionModal.open()
     } else if (btnType === 'remove') {
-        confirmModal.setContent(`
-        <p>Вы удаляете книги: <strong>${book.title}</strong></p>
-        `)
-        confirmModal.open()
+        $.confirm({
+            title: 'Вы уверены?',
+            content: `<p>Вы удаляете книги: <strong>${book.title}</strong></p>`
+        }).then(() => {
+
+        }).catch(() => {
+
+        })
     }
 })
 
