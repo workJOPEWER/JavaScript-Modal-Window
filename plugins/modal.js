@@ -1,3 +1,36 @@
+//вставляем футер на свое место
+Element.prototype.appendAfter = function (element) {
+    element.parentNode.insertBefore(this, element.nextSibling);
+}
+
+function noop() {
+}
+
+function _createModalFooter(buttons = []) {
+    //работаем с нодами в html
+    //проверяем длинну массива
+    if (buttons.length === 0) {
+        return document.createElement('div')
+    }
+    //
+    const wrap = document.createElement('div')
+    wrap.classList.add('modal-footer')
+
+    //генерируем кнопки
+    buttons.forEach(btn => {
+        const $btn = document.createElement('button')
+        $btn.textContent = btn.text
+        $btn.classList.add('btn')
+        $btn.classList.add(`btn-${btn.type || 'secondary'}`)
+        $btn.onclick = btn.handler || noop
+
+        //помещаем кнопку на место
+        wrap.appendChild($btn)
+
+    })
+    return wrap
+}
+
 function _createModal(options) {
     const DEFAULT_WIDTH = '600px'
     const modal = document.createElement('div')
@@ -12,19 +45,18 @@ function _createModal(options) {
             <div class="modal-body" data-content>
                 ${options.content || ''}
             </div>
-            <div class="modal-footer">
-                <button>OK</button>
-                <button>CANCEL</button>
-            </div>
         </div>
     </div>
     `)
+    const footer = _createModalFooter(options.footerButtons)
+    footer.appendAfter(modal.querySelector('[data-content]'))
+
     document.body.appendChild(modal)
     return modal
 }
 
 /*
-* setContent(html: string): void | PUBLIC
+*
 * onClose(): void
 * onOpen(): void
 * beforeClose(): boolean
