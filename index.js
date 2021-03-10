@@ -1,5 +1,5 @@
 //отвечает за приложение.
-const books = [
+let books = [
     {
         id: 1,
         title: 'Kниги по DevOps',
@@ -76,9 +76,10 @@ document.addEventListener('click', event => {
             title: 'Вы уверены?',
             content: `<p>Вы удаляете книги: <strong>${book.title}</strong></p>`
         }).then(() => {
-
+            //delete element
+            books = books.filter(b => b.id !== id)
+            render()
         }).catch(() => {
-
         })
     }
 })
