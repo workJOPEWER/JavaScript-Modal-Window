@@ -9,7 +9,7 @@ function _createModal(options) {
                 <span class="modal-title">${options.title || 'Modal window'}</span>
                 ${options.closable ? `<span class="modal-close" data-close="true">&times;</span>` : ''}
             </div>
-            <div class="modal-body">
+            <div class="modal-body" data-content>
                 ${options.content || ''}
             </div>
             <div class="modal-footer">
@@ -24,14 +24,12 @@ function _createModal(options) {
 }
 
 /*
-* options:
-* title: string
-* closable: boolean
-* content: string
-* width: string ('400px')
-* destroy(): void
-* window close
-
+* setContent(html: string): void | PUBLIC
+* onClose(): void
+* onOpen(): void
+* beforeClose(): boolean
+* --------------
+* animate.css
 */
 
 $.modal = function (options) {
@@ -66,11 +64,15 @@ $.modal = function (options) {
 
     $modal.addEventListener('click', listener)
 
+    // public base
     return Object.assign(modal, {
         destroy() {
             $modal.parentNode.removeChild($modal)
             $modal.removeEventListener('click', listener)
             destroyed = true
+        },
+        setContent(html) {
+            $modal.querySelector('[data-content]').innerHTML = html
         }
     })
 }
