@@ -1,17 +1,16 @@
 function _createModal(options) {
+    const DEFAULT_WIDTH = '600px'
     const modal = document.createElement('div')
     modal.classList.add('amodal')
     modal.insertAdjacentHTML('afterbegin', `
-    <div class="modal-overlay">
-        <div class="modal-window">
+    <div class="modal-overlay" data-close="true">
+        <div class="modal-window" style="width: ${options.width || DEFAULT_WIDTH}">
             <div class="modal-header">
-                <span class="modal-title">Modal Title</span>
-                <span class="modal-close">&times;</span>
+                <span class="modal-title">${options.title || 'Modal window'}</span>
+                ${options.closable ? `<span class="modal-close" data-close="true">&times;</span>` : ''}
             </div>
             <div class="modal-body">
-                <p>Практика - это материальная, чувствнно предметная целенаправленная деятельность людей, имеющая своим содержанием освоение и преобразов прир и социальных объектов и составляющая всеобщую основу, движ силу развития челов общества и познания.</p>
-                <p>Практика и познание — две взаимосвязанные стороны единого исторического процесса, но решающую роль здесь играет практическая деятельность.</p>
-
+                ${options.content || ''}
             </div>
             <div class="modal-footer">
                 <button>OK</button>
@@ -25,29 +24,27 @@ function _createModal(options) {
 }
 
 /*
+* options:
 * title: string
 * closable: boolean
 * content: string
 * width: string ('400px')
 * destroy(): void
 * window close
-* ---------------
-* setContent(html: string): void | PUBLIC
-* onClose(): void
-* onOpen(): void
-* beforeClose(): boolean
-* --------------
-* animate.css
+
 */
 
 $.modal = function (options) {
     const ANIMATION_SPEED = 200;
     const $modal = _createModal(options)
     let closing = false
+    let destroyed = false
 
-
-    return {
+    const modal = {
         open() {
+            if (destroyed) {
+                return console.log('Modal is destroyed!')
+            }
             !closing && $modal.classList.add('open')
         },
         close() {
@@ -58,10 +55,22 @@ $.modal = function (options) {
                 $modal.classList.add('hide')
                 closing = false
             }, ANIMATION_SPEED)
-
-        },
-        destroy() {
         }
-
     }
+
+    const listener = event => {
+        if (event.target.dataset.close) {
+            modal.close()
+        }
+    }
+
+    $modal.addEventListener('click', listener)
+
+    return Object.assign(modal, {
+        destroy() {
+            $modal.parentNode.removeChild($modal)
+            $modal.removeEventListener('click', listener)
+            destroyed = true
+        }
+    })
 }
