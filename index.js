@@ -22,14 +22,13 @@ const books = [
 
 //метод toHTML преобразовывает объект books
 // преодразовывает в строку -шаблон карты
-const toHTML = books => `
+const toHTML = book => `
 <div class="col">
             <div class="card" style="width: 18rem;">
-                <img style="width: 100%" src="${books.img}" class="card-img-top" alt="${books.title}">
+                <img style="width: 100%; height: 200px;" src="${book.img}" class="card-img-top" alt="${book.title}">
                 <div class="card-body">
-                    <h5 class="card-title">${books.title}</h5>
-                    <p class="card-text">Погружение в тему DevOps – это тот путь, который потребует от вас постоянного самосовершенствования и изучения новых технологий.</p>
-                    <a href="#" class="btn btn-primary">Узнать больше</a>
+                    <h5 class="card-title">${book.title}</h5>
+                    <a href="#" class="btn btn-primary" data-btn="description" data-id="${book.id}">Узнать больше</a>
                     <a href="#" class="btn btn-danger">Удалить</a>
                 </div>
             </div>
@@ -44,30 +43,34 @@ function render() {
 
 render()
 
-const modal = $.modal({
-    title: 'Jopewer Modal Window',
+const descriptionModal = $.modal({
+    title: 'Описание книги',
     closable: true,
-    content: `
-    <p>Практика - это материальная, чувствнно предметная целенаправленная деятельность людей, 
-    имеющая своим содержанием освоение и преобразов прир и социальных объектов и составляющая 
-    всеобщую основу, движ силу развития челов общества и познания.</p>
-    `,
     width: '400px',
     footerButtons: [
-        {
-            text: 'Ok', type: 'primary', handler() {
-                console.log('primary btn clicked')
-                modal.close()
-            }
-        },
-        {
-            text: 'Cancel', type: 'danger', handler() {
-                console.log('danger btn clicked')
-                modal.close()
-            }
-        }
+        {text: 'Закрыть', type: 'primary', handler() {
+            descriptionModal.close()
+        }}
     ]
 });
 
+document.addEventListener('click', event => {
+    event.preventDefault();
+    const btnType = event.target.dataset.btn
 
+    //строку преобразуем к числу +
+    const id = +event.target.dataset.id
+
+    if (btnType === 'description') {
+        const book = books.find( b => b.id === id)
+
+        descriptionModal.setContent(`
+        <p>Описание: <i>${book.description}</i></p>
+        `)
+
+        descriptionModal.open()
+
+        console.log(id, book)
+    }
+})
 

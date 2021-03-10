@@ -31,6 +31,8 @@ function _createModalFooter(buttons = []) {
     return wrap
 }
 
+/*data атрибуты для кастомных значении для HTML
+и не портят его валидность*/
 function _createModal(options) {
     const DEFAULT_WIDTH = '600px'
     const modal = document.createElement('div')
@@ -70,6 +72,7 @@ $.modal = function (options) {
     let closing = false
     let destroyed = false
 
+    //пример работы замыкания
     const modal = {
         open() {
             if (destroyed) {
@@ -78,16 +81,17 @@ $.modal = function (options) {
             !closing && $modal.classList.add('open')
         },
         close() {
-            closing = true
-            $modal.classList.remove('open')
-            $modal.classList.add('hide')
+            closing = true;
+            $modal.classList.remove('open');
+            $modal.classList.add('hide');
             setTimeout(() => {
-                $modal.classList.add('hide')
+                $modal.classList.remove('hide');
                 closing = false
             }, ANIMATION_SPEED)
         }
     }
 
+    /*объект dataset содержит в себе набор всех data атрибутов*/
     const listener = event => {
         if (event.target.dataset.close) {
             modal.close()
@@ -96,10 +100,11 @@ $.modal = function (options) {
 
     $modal.addEventListener('click', listener)
 
-    // public base
+    // public base.
+    // работаем с объектами
     return Object.assign(modal, {
         destroy() {
-            $modal.parentNode.removeChild($modal)
+            $modal.parentNode.removeChild($modal); //удаляем модалку
             $modal.removeEventListener('click', listener)
             destroyed = true
         },
