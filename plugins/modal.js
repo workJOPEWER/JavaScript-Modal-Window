@@ -109,6 +109,7 @@ $.modal = function (options) {
             destroyed = true
         },
         setContent(html) {
+            //получить HTML-содержимое элемента в виде строки
             $modal.querySelector('[data-content]').innerHTML = html
         }
     })

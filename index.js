@@ -29,7 +29,7 @@ const toHTML = book => `
                 <div class="card-body">
                     <h5 class="card-title">${book.title}</h5>
                     <a href="#" class="btn btn-primary" data-btn="description" data-id="${book.id}">Узнать больше</a>
-                    <a href="#" class="btn btn-danger">Удалить</a>
+                    <a href="#" class="btn btn-danger" data-btn="remove" data-id="${book.id}">Удалить</a>
                 </div>
             </div>
         </div>
@@ -48,9 +48,29 @@ const descriptionModal = $.modal({
     closable: true,
     width: '400px',
     footerButtons: [
-        {text: 'Закрыть', type: 'primary', handler() {
-            descriptionModal.close()
-        }}
+        {
+            text: 'Закрыть', type: 'primary', handler() {
+                descriptionModal.close()
+            }
+        }
+    ]
+});
+
+const confirmModal = $.modal({
+    title: 'Вы уверены?',
+    closable: true,
+    width: '400px',
+    footerButtons: [
+        {
+            text: 'Отменить', type: 'secondary', handler() {
+                confirmModal.close()
+            }
+        },
+        {
+            text: 'Удалить', type: 'danger', handler() {
+                confirmModal.close()
+            }
+        }
     ]
 });
 
@@ -61,16 +81,19 @@ document.addEventListener('click', event => {
     //строку преобразуем к числу +
     const id = +event.target.dataset.id
 
-    if (btnType === 'description') {
-        const book = books.find( b => b.id === id)
+    //доступно только для кнопок
+    const book = books.find(b => b.id === id)
 
+    if (btnType === 'description') {
         descriptionModal.setContent(`
         <p>Описание: <i>${book.description}</i></p>
         `)
-
         descriptionModal.open()
-
-        console.log(id, book)
+    } else if (btnType === 'remove') {
+        confirmModal.setContent(`
+        <p>Вы удаляете книги: <strong>${book.title}</strong></p>
+        `)
+        confirmModal.open()
     }
 })
 
